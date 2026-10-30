@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>To My Favorite Star ✨</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&family=Sacramento&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --night: #070b1f;
+    --night-2: #0d1236;
+    --nebula: #6a3fc9;
+    --nebula-2: #8e5be8;
+    --pink: #ff5fa8;
+    --magenta: #d63aff;
+    --gold: #f6d58e;
+    --text: #eceaff;
+    --text-soft: #b9b4e0;
+    --glass: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(ellipse at 20% 15%, rgba(142, 91, 232, 0.35), transparent 50%),
+      radial-gradient(ellipse at 80% 35%, rgba(255, 95, 168, 0.22), transparent 55%),
+      radial-gradient(ellipse at 50% 85%, rgba(80, 90, 255, 0.25), transparent 55%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== Canvas layers ===== */
+  #sky, #sparkles {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  #sky { z-index: 0; }
+  #sparkles { z-index: 60; }
+
+  main { position: relative; z-index: 2; }
+  section { padding: 90px 20px; max-width: 1100px; margin: 0 auto; }
+
+  /* ===== Fade-in on scroll ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  .reveal.show { opacity: 1; transform: none; }
+
+  /* ===== Hero ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 18px;
+  }
+  .hero .eyebrow {
+    letter-spacing: 6px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    animation: fadeUp 2s 0.3s forwards;
+  }
+  .hero h1 {
+    font-family: 'Sacramento', cursive;
+    font-weight: 400;
+    font-size: clamp(3rem, 11vw, 7rem);
+    line-height: 1.1;
+    background: linear-gradient(90deg, var(--gold), var(--pink), var(--nebula-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 18px rgba(255, 95, 168, 0.45));
+    opacity: 0;
+    animation: fadeUp 2s 0.8s forwards;
+  }
+  .typing {
+    min-height: 2em;
+    font-size: clamp(0.95rem, 2.8vw, 1.25rem);
+    color: var(--text-soft);
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 2s 1.6s forwards;
+  }
+  .typing::after {
+    content: '|';
+    margin-left: 3px;
+    color: var(--pink);
+    animation: blink 1s steps(1) infinite;
+  }
+  .scroll-hint {
+    margin-top: 30px;
+    opacity: 0;
+    animation: fadeUp 2s 2.4s forwards;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ===== Tombol bercahaya ===== */
+  .btn {
+    display: inline-block;
+    padding: 14px 34px;
+    border-radius: 50px;
+    border: 1px solid var(--pink);
+    background: linear-gradient(135deg, rgba(255, 95, 168, 0.25), rgba(142, 91, 232, 0.25));
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+    box-shadow: 0 0 12px rgba(255, 95, 168, 0.35);
+  }
+  .btn:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 0 28px rgba(255, 95, 168, 0.8), 0 0 60px rgba(142, 91, 232, 0.5);
+    background: linear-gradient(135deg, rgba(255, 95, 168, 0.5), rgba(142, 91, 232, 0.5));
+  }
+
+  /* ===== Judul section ===== */
+  .section-title {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .section-title h2 {
+    font-family: 'Sacramento', cursive;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(246, 213, 142, 0.5);
+  }
+  .section-title p { color: var(--text-soft); font-weight: 300; margin-top: 6px; }
+
+  /* ===== Bingkai foto neon ===== */
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 34px;
+    justify-items: center;
+  }
+  .frame {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    padding: 10px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, var(--pink), var(--nebula-2), var(--gold), var(--magenta));
+    background-size: 300% 300%;
+    animation: borderFlow 8s ease infinite;
+    box-shadow:
+      0 0 15px rgba(255, 95, 168, 0.55),
+      0 0 45px rgba(142, 91, 232, 0.45);
+    transition: transform 0.5s, box-shadow 0.5s;
+  }
+  .frame:nth-child(even) { margin-top: 28px; }
+  .frame:hover {
+    transform: translateY(-8px) rotate(-1.5deg) scale(1.03);
+    box-shadow: 0 0 25px rgba(255, 95, 168, 0.9), 0 0 80px rgba(142, 91, 232, 0.7);
+  }
+  .frame .photo {
+    border-radius: 14px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background: var(--night);
+  }
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.8s;
+  }
+  .frame:hover img { transform: scale(1.08); }
+  .frame .caption {
+    text-align: center;
+    padding: 12px 6px 4px;
+    font-family: 'Sacramento', cursive;
+    font-size: 1.6rem;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  }
+  @keyframes borderFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ===== Glassmorphism ===== */
+  .glass {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 24px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35), inset 0 0 30px rgba(255, 255, 255, 0.03);
+  }
+
+  .letter {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(26px, 6vw, 56px);
+    text-align: center;
+    transition: box-shadow 0.4s;
+  }
+  .letter:hover { box-shadow: 0 8px 50px rgba(142, 91, 232, 0.5), 0 0 40px rgba(255, 95, 168, 0.25); }
+  .letter .to {
+    font-family: 'Sacramento', cursive;
+    font-size: 2.2rem;
+    color: var(--pink);
+    margin-bottom: 14px;
+  }
+  .letter p { line-height: 1.9; font-weight: 300; color: var(--text); margin-bottom: 14px; }
+  .letter .sign {
+    font-family: 'Sacramento', cursive;
+    font-size: 2rem;
+    color: var(--gold);
+    margin-top: 22px;
+  }
+
+  /* ===== Alasan ===== */
+  .reasons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+    margin-top: 50px;
+  }
+  .reason {
+    padding: 26px 22px;
+    text-align: center;
+    transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
+  }
+  .reason:hover {
+    transform: translateY(-8px);
+    border-color: var(--pink);
+    box-shadow: 0 0 30px rgba(255, 95, 168, 0.5);
+  }
+  .reason .icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+  .reason h3 { font-weight: 500; font-size: 1.05rem; color: var(--gold); margin-bottom: 8px; }
+  .reason p { font-size: 0.9rem; color: var(--text-soft); font-weight: 300; line-height: 1.7; }
+
+  /* ===== Counter ===== */
+  .counter { text-align: center; }
+  .counter-box {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+  }
+  .counter-item { padding: 18px 22px; min-width: 90px; }
+  .counter-item b {
+    display: block;
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(90deg, var(--gold), var(--pink));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .counter-item span { font-size: 0.75rem; letter-spacing: 2px; color: var(--text-soft); text-transform: uppercase; }
+
+  .final { text-align: center; padding-bottom: 140px; }
+  .final h2 {
+    font-family: 'Sacramento', cursive;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 8vw, 4.5rem);
+    margin-bottom: 26px;
+    background: linear-gradient(90deg, var(--gold), var(--pink), var(--nebula-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  #surpriseMsg {
+    margin-top: 26px;
+    min-height: 1.6em;
+    color: var(--gold);
+    font-weight: 300;
+    transition: opacity 0.6s;
+  }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px 40px;
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    font-weight: 300;
+  }
+
+  /* ===== Pemutar musik ===== */
+  .music-player {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 60px;
+    background: rgba(20, 16, 60, 0.6);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 0 20px rgba(142, 91, 232, 0.5);
+  }
+  .music-player .label { font-size: 0.72rem; color: var(--text-soft); line-height: 1.3; }
+  .music-player .label b { display: block; color: var(--gold); font-weight: 500; font-size: 0.78rem; }
+  .vinyl-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    background:
+      radial-gradient(circle, var(--pink) 0 14%, #111 15% 30%, #222 31% 33%, #111 34% 55%, #2a2a2a 56% 58%, #0a0a0a 59% 100%);
+    box-shadow: 0 0 14px rgba(255, 95, 168, 0.7);
+    animation: spin 4s linear infinite;
+    animation-play-state: paused;
+    transition: transform 0.3s;
+  }
+  .vinyl-btn:hover { transform: scale(1.1); box-shadow: 0 0 26px rgba(255, 95, 168, 1); }
+  .vinyl-btn.playing { animation-play-state: running; }
+  .vinyl-btn::after {
+    content: '♪';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Responsif ===== */
+  @media (max-width: 600px) {
+    section { padding: 70px 16px; }
+    .frame:nth-child(even) { margin-top: 0; }
+    .music-player .label { display: none; }
+    .music-player { padding: 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+
+<body>
+  <!-- Layer bintang & partikel -->
+  <canvas id="sky"></canvas>
+  <canvas id="sparkles"></canvas>
+
+  <!-- ============ MUSIK ============
+       ✏️ GANTI: isi src dengan link / nama file lagu kamu.
+       Contoh file lokal  : src="lagu-kita.mp3"  (taruh satu folder dengan file HTML ini)
+       Contoh link langsung: src="https://situs-kamu.com/lagu.mp3"
+       Catatan: browser memblokir autoplay, jadi lagu mulai saat tombol piringan diklik. -->
+  <audio id="bgm" loop preload="auto">
+    <source src="LETAKKAN-LINK-ATAU-NAMA-FILE-MUSIK-DI-SINI.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="music-player glow-hover">
+    <div class="label"><b id="musicStatus">Putar lagu kita</b><span id="musicHint">Klik piringan ♪</span></div>
+    <button class="vinyl-btn" id="musicBtn" aria-label="Putar atau jeda musik"></button>
+  </div>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="eyebrow">Untuk seseorang yang istimewa</div>
+      <!-- ✏️ GANTI judul jika mau -->
+      <h1>To My Favorite Star<br />in the Universe</h1>
+      <div class="typing" id="typing"></div>
+      <a href="#foto" class="btn scroll-hint glow-hover">Jelajahi Galaksi Kita ✦</a>
+    </section>
+
+    <!-- ============ FOTO ============ -->
+    <section id="foto">
+      <div class="section-title reveal">
+        <h2>Bintang-Bintang Kita</h2>
+        <p>Setiap momen bersamamu adalah konstelasi terindah</p>
+      </div>
+
+      <div class="gallery">
+        <!-- ✏️ GANTI src="..." dengan URL / nama file foto pacarmu. Ganti juga captionnya. -->
+        <figure class="frame reveal glow-hover">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600&q=80" alt="Foto 1" />
+          </div>
+          <figcaption class="caption">Senyummu</figcaption>
+        </figure>
+
+        <figure class="frame reveal glow-hover">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?w=600&q=80" alt="Foto 2" />
+          </div>
+          <figcaption class="caption">Kita Berdua</figcaption>
+        </figure>
+
+        <figure class="frame reveal glow-hover">
+          <div class="photo">
+            <img src="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=600&q=80" alt="Foto 3" />
+          </div>
+          <figcaption class="caption">Kenangan Kita</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ SURAT CINTA ============ -->
+    <section id="surat">
+      <div class="section-title reveal">
+        <h2>Surat dari Hatiku</h2>
+        <p>Untuk kamu, yang membuat duniaku bersinar</p>
+      </div>
+
+      <div class="letter glass reveal">
+        <!-- ✏️ GANTI nama dan isi surat sesuai ceritamu -->
+        <div class="to">Untuk Syahla 💫</div>
+        <p>
+          Di antara miliaran bintang di langit, aku selalu menemukan jalan pulang kepadamu.
+          Kamu adalah cahaya yang membuat hari-hariku terasa lebih hangat dan lebih berarti.
+        </p>
+        <p>
+          Terima kasih sudah hadir, sabar, dan tetap tinggal. Apa pun yang terjadi,
+          aku ingin terus berjalan bersamamu, melewati setiap galaksi yang ada.
+        </p>
+        <p>
+          Aku sayang kamu. Hari ini, besok, dan sejauh semesta ini membentang.
+        </p>
+        <div class="sign">— Munggaran ❤</div>
+      </div>
+
+      <div class="reasons">
+        <!-- ✏️ GANTI alasan-alasan ini dengan alasan versimu sendiri -->
+        <div class="glass reason reveal glow-hover">
+          <span class="icon">🌙</span>
+          <h3>Kamu Menenangkan</h3>
+          <p>Di dekatmu, semua rasa lelah seolah hilang seperti malam yang tenang.</p>
+        </div>
+        <div class="glass reason reveal glow-hover">
+          <span class="icon">✨</span>
+          <h3>Kamu Bersinar</h3>
+          <p>Caramu menjadi dirimu sendiri adalah hal paling indah yang pernah kulihat.</p>
+        </div>
+        <div class="glass reason reveal glow-hover">
+          <span class="icon">💖</span>
+          <h3>Kamu Tulus</h3>
+          <p>Kebaikan hatimu membuatku percaya bahwa cinta itu nyata.</p>
+        </div>
+        <div class="glass reason reveal glow-hover">
+          <span class="icon">🚀</span>
+          <h3>Kamu Petualanganku</h3>
+          <p>Bersamamu, hal biasa pun terasa seperti perjalanan ke bintang-bintang.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ HITUNG HARI ============ -->
+    <section class="counter">
+      <div class="section-title reveal">
+        <h2>Waktu yang Kita Lewati</h2>
+        <p>Sejak hari pertama kita bersama</p>
+      </div>
+      <div class="counter-box reveal">
+        <div class="glass counter-item"><b id="cDays">0</b><span>Hari</span></div>
+        <div class="glass counter-item"><b id="cHours">0</b><span>Jam</span></div>
+        <div class="glass counter-item"><b id="cMins">0</b><span>Menit</span></div>
+        <div class="glass counter-item"><b id="cSecs">0</b><span>Detik</span></div>
+      </div>
+    </section>
+
+    <!-- ============ PENUTUP ============ -->
+    <section class="final">
+      <div class="reveal">
+        <h2>Kamu Adalah Semestaku</h2>
+        <button class="btn glow-hover" id="surpriseBtn">Klik untuk kejutan 💫</button>
+        <div id="surpriseMsg"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Dibuat dengan cinta di bawah jutaan bintang ✦</footer>
+
+<script>
+/* =========================================================
+   ✏️ PENGATURAN YANG BISA KAMU UBAH
+   ========================================================= */
+const CONFIG = {
+  // Kalimat yang diketik di hero (diputar bergantian)
+  typingTexts: [
+    "Kamu adalah bintang paling terang di langitku.",
+    "Terima kasih sudah menjadi rumah bagi hatiku.",
+    "Aku mencintaimu, lebih dari seluruh bintang di galaksi.",
+  ],
+  // Tanggal jadian (tahun, bulan 1-12, tanggal, jam, menit)
+  startDate: new Date(2024, 0, 1, 0, 0, 0),
+  // Pesan kejutan yang muncul saat tombol diklik
+  surpriseMessages: [
+    "Kamu adalah alasan aku tersenyum setiap hari 💖",
+    "Aku beruntung punya kamu di semestaku ✨",
+    "Selamanya milikmu, di galaksi mana pun 🌌",
+    "I love you to the moon and back 🌙",
+  ],
+};
+
+/* =========================================================
+   LATAR BELAKANG: bintang berkedip + bintang jatuh
+   ========================================================= */
+const sky = document.getElementById('sky');
+const sctx = sky.getContext('2d');
+let W, H, stars = [], shooters = [];
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+
+function resizeSky() {
+  W = window.innerWidth; H = window.innerHeight;
+  sky.width = W * DPR; sky.height = H * DPR;
+  sctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  const count = Math.floor((W * H) / 5500);
+  stars = Array.from({ length: count }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.4 + 0.2,
+    phase: Math.random() * Math.PI * 2,
+    speed: Math.random() * 0.025 + 0.008,
+    hue: Math.random() < 0.15 ? 330 : (Math.random() < 0.3 ? 45 : 230),
+  }));
+}
+window.addEventListener('resize', resizeSky);
+resizeSky();
+
+function spawnShooter() {
+  const fromTop = Math.random() < 0.7;
+  shooters.push({
+    x: fromTop ? Math.random() * W : W + 20,
+    y: fromTop ? -20 : Math.random() * H * 0.5,
+    vx: -(Math.random() * 4 + 6),
+    vy: Math.random() * 3 + 4,
+    life: 0,
+    max: 70 + Math.random() * 30,
+  });
+}
+setInterval(() => { if (Math.random() < 0.7) spawnShooter(); }, 2600);
+
+function drawSky() {
+  sctx.clearRect(0, 0, W, H);
+
+  // Bintang berkedip
+  for (const s of stars) {
+    s.phase += s.speed;
+    const a = 0.35 + 0.65 * Math.abs(Math.sin(s.phase));
+    sctx.beginPath();
+    sctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    sctx.fillStyle = `hsla(${s.hue}, 90%, 85%, ${a})`;
+    sctx.shadowBlur = s.r * 5;
+    sctx.shadowColor = `hsla(${s.hue}, 100%, 80%, ${a})`;
+    sctx.fill();
+  }
+  sctx.shadowBlur = 0;
+
+  // Bintang jatuh
+  for (let i = shooters.length - 1; i >= 0; i--) {
+    const m = shooters[i];
+    m.x += m.vx; m.y += m.vy; m.life++;
+    const fade = 1 - m.life / m.max;
+    const tx = m.x - m.vx * 9, ty = m.y - m.vy * 9;
+    const g = sctx.createLinearGradient(m.x, m.y, tx, ty);
+    g.addColorStop(0, `rgba(255,255,255,${fade})`);
+    g.addColorStop(0.4, `rgba(255,150,210,${fade * 0.6})`);
+    g.addColorStop(1, 'rgba(142,91,232,0)');
+    sctx.strokeStyle = g;
+    sctx.lineWidth = 2;
+    sctx.lineCap = 'round';
+    sctx.beginPath();
+    sctx.moveTo(m.x, m.y);
+    sctx.lineTo(tx, ty);
+    sctx.stroke();
+    if (m.life > m.max || m.x < -100 || m.y > H + 100) shooters.splice(i, 1);
+  }
+  requestAnimationFrame(drawSky);
+}
+drawSky();
+
+/* =========================================================
+   PARTIKEL BERCAHAYA (kursor / sentuhan / hover)
+   ========================================================= */
+const spk = document.getElementById('sparkles');
+const pctx = spk.getContext('2d');
+let particles = [];
+
+function resizeSpk() {
+  spk.width = window.innerWidth * DPR;
+  spk.height = window.innerHeight * DPR;
+  pctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+}
+window.addEventListener('resize', resizeSpk);
+resizeSpk();
+
+const COLORS = ['#ff5fa8', '#f6d58e', '#d63aff', '#8e5be8', '#ffffff'];
+
+function addParticles(x, y, n = 2, burst = false) {
+  for (let i = 0; i < n; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const sp = burst ? Math.random() * 4 + 1.5 : Math.random() * 1.2 + 0.2;
+    particles.push({
+      x, y,
+      vx: Math.cos(ang) * sp,
+      vy: Math.sin(ang) * sp - (burst ? 1 : 0.3),
+      r: Math.random() * 2.6 + 1,
+      life: 0,
+      max: burst ? 60 + Math.random() * 30 : 35 + Math.random() * 25,
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      heart: burst && Math.random() < 0.35,
+    });
+  }
+  if (particles.length > 400) particles.splice(0, particles.length - 400);
+}
+
+let lastMove = 0;
+window.addEventListener('pointermove', (e) => {
+  const now = performance.now();
+  if (now - lastMove < 25) return;
+  lastMove = now;
+  const overGlow = e.target.closest && e.target.closest('.glow-hover');
+  addParticles(e.clientX, e.clientY, overGlow ? 4 : 1);
+});
+window.addEventListener('pointerdown', (e) => addParticles(e.clientX, e.clientY, 14, true));
+
+function drawParticles() {
+  pctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.02; p.life++;
+    const a = 1 - p.life / p.max;
+    if (a <= 0) { particles.splice(i, 1); continue; }
+    pctx.globalAlpha = a;
+    pctx.fillStyle = p.color;
+    pctx.shadowBlur = 12;
+    pctx.shadowColor = p.color;
+    if (p.heart) {
+      pctx.font = `${p.r * 6}px serif`;
+      pctx.fillText('♥', p.x, p.y);
+    } else {
+      pctx.beginPath();
+      pctx.arc(p.x, p.y, p.r * a + 0.3, 0, Math.PI * 2);
+      pctx.fill();
+    }
+  }
+  pctx.globalAlpha = 1;
+  pctx.shadowBlur = 0;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* =========================================================
+   EFEK MENGETIK
+   ========================================================= */
+(function typingEffect() {
+  const el = document.getElementById('typing');
+  let t = 0, c = 0, deleting = false;
+  function tick() {
+    const text = CONFIG.typingTexts[t];
+    if (!deleting) {
+      el.textContent = text.slice(0, ++c);
+      if (c === text.length) { deleting = true; return setTimeout(tick, 2200); }
+      setTimeout(tick, 55);
+    } else {
+      el.textContent = text.slice(0, --c);
+      if (c === 0) { deleting = false; t = (t + 1) % CONFIG.typingTexts.length; return setTimeout(tick, 500); }
+      setTimeout(tick, 25);
+    }
+  }
+  setTimeout(tick, 2400);
+})();
+
+/* =========================================================
+   FADE-IN SAAT SCROLL
+   ========================================================= */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((en) => {
+    if (en.isIntersecting) { en.target.classList.add('show'); io.unobserve(en.target); }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = (i % 4) * 0.12 + 's';
+  io.observe(el);
+});
+
+/* =========================================================
+   PEMUTAR MUSIK
+   ========================================================= */
+const audio = document.getElementById('bgm');
+const musicBtn = document.getElementById('musicBtn');
+const musicStatus = document.getElementById('musicStatus');
+const musicHint = document.getElementById('musicHint');
+
+musicBtn.addEventListener('click', async (e) => {
+  e.stopPropagation();
+  try {
+    if (audio.paused) {
+      await audio.play();
+      musicBtn.classList.add('playing');
+      musicStatus.textContent = 'Sedang diputar';
+      musicHint.textContent = 'Klik untuk jeda';
+    } else {
+      audio.pause();
+      musicBtn.classList.remove('playing');
+      musicStatus.textContent = 'Dijeda';
+      musicHint.textContent = 'Klik untuk lanjut';
+    }
+  } catch (err) {
+    musicStatus.textContent = 'Musik belum diisi';
+    musicHint.textContent = 'Isi src di tag <audio>';
+  }
+});
+audio.addEventListener('error', () => {
+  musicBtn.classList.remove('playing');
+});
+
+/* =========================================================
+   HITUNG WAKTU BERSAMA
+   ========================================================= */
+function updateCounter() {
+  let diff = Math.max(0, Date.now() - CONFIG.startDate.getTime());
+  const s = Math.floor(diff / 1000);
+  document.getElementById('cDays').textContent = Math.floor(s / 86400);
+  document.getElementById('cHours').textContent = Math.floor((s % 86400) / 3600);
+  document.getElementById('cMins').textContent = Math.floor((s % 3600) / 60);
+  document.getElementById('cSecs').textContent = s % 60;
+}
+updateCounter();
+setInterval(updateCounter, 1000);
+
+/* =========================================================
+   TOMBOL KEJUTAN
+   ========================================================= */
+let msgIdx = 0;
+document.getElementById('surpriseBtn').addEventListener('click', (e) => {
+  const msg = document.getElementById('surpriseMsg');
+  msg.style.opacity = 0;
+  setTimeout(() => {
+    msg.textContent = CONFIG.surpriseMessages[msgIdx++ % CONFIG.surpriseMessages.length];
+    msg.style.opacity = 1;
+  }, 250);
+  const r = e.target.getBoundingClientRect();
+  for (let i = 0; i < 6; i++) addParticles(r.left + r.width / 2, r.top + r.height / 2, 12, true);
+  for (let i = 0; i < 3; i++) setTimeout(spawnShooter, i * 300);
+});
+</script>
+</body>
+</html>
